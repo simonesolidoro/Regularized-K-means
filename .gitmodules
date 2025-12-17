@@ -1,3 +1,4 @@
 [submodule "fdaPDE-cpp"]
 	path = fdaPDE-cpp
-	url = https://github.com/fdaPDE/fdaPDE-cpp.git
+	url = https://github.com/simonesolidoro/fdaPDE-cpp.git
+	branch = stable

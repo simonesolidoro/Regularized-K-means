@@ -147,10 +147,10 @@ private:
 
       SRPDE<typename Penalty::solver_t> model("y ~ f", data, penalty_);
       if (lambda) {
-        model.fit(*lambda);
+        model.fit(0,*lambda);
       } else {
         // calibration
-        GridOptimizer<1> optimizer;
+        GridSearch<1> optimizer;
         int seed = (seed_) ? *seed_ : std::random_device{}();
         // if (c == 0) {
         //   optimizer.optimize(model.gcv(100, seed), lambda_grid_);
@@ -168,7 +168,7 @@ private:
         //   std::cerr << "Warning: Optimal lambda is at the edge of the grid. "
         //             << "Consider expanding the grid for better results.\n";
         // }
-        model.fit(optimizer.optimum());
+        model.fit(0,optimizer.optimum());
       }
 
       centroids_.row(c) = model.fitted();
@@ -305,10 +305,10 @@ private:
 
       SRPDE<typename Penalty::solver_t> model("y ~ f", data, penalty_);
       if (lambda) {
-        model.fit(*lambda);
+        model.fit(0,*lambda);
       } else {
         // calibration
-        GridOptimizer<1> optimizer;
+        GridSearch<1> optimizer;
         int seed = (seed_) ? *seed_ : std::random_device{}();
         auto gcv = model.gcv(100, seed);
         optimizer.optimize(gcv, lambda_grid_);
@@ -320,7 +320,7 @@ private:
         //   std::cerr << "Warning: Optimal lambda is at the edge of the grid. "
         //             << "Consider expanding the grid for better results.\n";
         // }
-        model.fit(optimizer.optimum());
+        model.fit(0,optimizer.optimum());
       }
 
       centroids_.row(c) = model.fitted();
