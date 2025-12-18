@@ -28,7 +28,7 @@ int main() {
   // seed = 42;
 
   std::string combination = "021102"; // "001122", "021102"
-  unsigned N = 50;
+  unsigned N = 1; //50; a me non interessa bvalutare il kmean, voglio solo 1 dataset per fare test di speedup tra kmean-reg con sequenziale gcv e con parallelo gcv
   unsigned k = 3;
   unsigned K_na = 20;        // areal missing data clusters
   double missing_perc = 0.5; // 50% missing data
