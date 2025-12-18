@@ -47,26 +47,26 @@ int main() {
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // SET PARAMETERS
-  std::vector<unsigned> k_vec = {2, 3, 4, 5};
+  std::vector<unsigned> k_vec = {2}; // a me interessa solo confronto per speedup teniamo classi 2 e basta.  , 3, 4, 5};
 
   unsigned max_iter = 25;
 
-  unsigned n_runs = 10;
+  unsigned n_runs = 1; // 1 sola run perché mi interessa solo lo speedup
 
   std::optional<unsigned> seed = std::nullopt;
 
-  seed = std::random_device{}(); // random seed for reproducibility
-  std::mt19937_64 rng(*seed);
-  // seed = params.seed; // 42; // seed for random number generator
+  // seed = std::random_device{}(); // random seed for reproducibility
+  // std::mt19937_64 rng(*seed);
+  seed = 42; // params.seed; // 42; // seed for random number generator
 
   std::vector<double> lambda_grid;
-  // lambda_grid.resize(9);
-  // for (int i = 0; i < lambda_grid.size(); ++i) {
-  //   lambda_grid[i] = std::pow(10, -8.0 + 0.25 * i);
-  // }
+  lambda_grid.resize(9);
+  for (int i = 0; i < lambda_grid.size(); ++i) {
+    lambda_grid[i] = std::pow(10, -8.0 + 0.25 * i);
+  }
 
-  // std::optional<double> lambda = std::nullopt;
-  double lambda = std::pow(10, -6.25);
+  std::optional<double> lambda = std::nullopt;
+  //double lambda = std::pow(10, -6.25); // lambda non noto (deve fare gcv )
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -183,7 +183,7 @@ int main() {
       t1 = high_resolution_clock::now();
 
       RKMeans rkmeans(dist, init, D, fe_ls_elliptic(a, F), responses, k,
-                      max_iter, rng());
+                      max_iter, seed); //
       rkmeans.set_gcv_grid(lambda_grid);
       rkmeans.run(lambda);
       n_iter = rkmeans.n_iterations();
@@ -239,69 +239,69 @@ int main() {
     }
   }
 
-  // K SELECTION WITH SILUETTE SCORE
+  // // K SELECTION WITH SILUETTE SCORE, ora non mi interessa
 
-  std::string out_siluette_file = output_dir + "siluette_scores.csv";
-  std::ofstream file_siluette(out_siluette_file);
-  if (!file_siluette.is_open()) {
-    std::cerr << "Error opening file: " << out_siluette_file << std::endl;
-    return 1;
-  }
-  file_siluette.close();
+  // std::string out_siluette_file = output_dir + "siluette_scores.csv";
+  // std::ofstream file_siluette(out_siluette_file);
+  // if (!file_siluette.is_open()) {
+  //   std::cerr << "Error opening file: " << out_siluette_file << std::endl;
+  //   return 1;
+  // }
+  // file_siluette.close();
 
-  for (auto k : k_vec) {
-    double siluette_score = 0.0;
+  // for (auto k : k_vec) {
+  //   double siluette_score = 0.0;
 
-    std::vector<std::vector<int>> clusters(k);
-    for (unsigned i = 0; i < best_memb[k].size(); ++i) {
-      clusters[best_memb[k][i]].push_back(i);
-    }
+  //   std::vector<std::vector<int>> clusters(k);
+  //   for (unsigned i = 0; i < best_memb[k].size(); ++i) {
+  //     clusters[best_memb[k][i]].push_back(i);
+  //   }
 
-    for (unsigned i = 0; i < best_memb[k].size(); ++i) {
-      int ci = best_memb[k][i];
+  //   for (unsigned i = 0; i < best_memb[k].size(); ++i) {
+  //     int ci = best_memb[k][i];
 
-      double a_i = 0.0;
-      int same_cluster_count = 0;
-      for (int j : clusters[ci]) {
-        if (i == j)
-          continue;
-        a_i += dist(responses.row(i), responses.row(j));
-        same_cluster_count++;
-      }
-      if (same_cluster_count > 0) {
-        a_i /= same_cluster_count;
-      }
+  //     double a_i = 0.0;
+  //     int same_cluster_count = 0;
+  //     for (int j : clusters[ci]) {
+  //       if (i == j)
+  //         continue;
+  //       a_i += dist(responses.row(i), responses.row(j));
+  //       same_cluster_count++;
+  //     }
+  //     if (same_cluster_count > 0) {
+  //       a_i /= same_cluster_count;
+  //     }
 
-      double b_i = std::numeric_limits<double>::max();
-      for (int c = 0; c < k; ++c) {
-        if (c == ci)
-          continue;
-        if (clusters[c].empty())
-          continue;
-        double avg_dist = 0.0;
-        for (int j : clusters[c]) {
-          avg_dist += dist(responses.row(i), responses.row(j));
-        }
-        avg_dist /= clusters[c].size();
-        b_i = std::min(b_i, avg_dist);
-      }
+  //     double b_i = std::numeric_limits<double>::max();
+  //     for (int c = 0; c < k; ++c) {
+  //       if (c == ci)
+  //         continue;
+  //       if (clusters[c].empty())
+  //         continue;
+  //       double avg_dist = 0.0;
+  //       for (int j : clusters[c]) {
+  //         avg_dist += dist(responses.row(i), responses.row(j));
+  //       }
+  //       avg_dist /= clusters[c].size();
+  //       b_i = std::min(b_i, avg_dist);
+  //     }
 
-      double s_i = (b_i - a_i) / std::max(a_i, b_i);
-      siluette_score += s_i;
-    }
+  //     double s_i = (b_i - a_i) / std::max(a_i, b_i);
+  //     siluette_score += s_i;
+  //   }
 
-    siluette_score /= best_memb[k].size();
+  //   siluette_score /= best_memb[k].size();
 
-    // --- Write result ---
-    file_siluette.open(out_siluette_file, std::ios::app);
-    if (file_siluette.is_open()) {
-      file_siluette << k << "," << siluette_score << "\n";
-      file_siluette.close();
-    } else {
-      std::cerr << "Unable to open file " << out_siluette_file << std::endl;
-      return 1;
-    }
-  }
+  //   // --- Write result ---
+  //   file_siluette.open(out_siluette_file, std::ios::app);
+  //   if (file_siluette.is_open()) {
+  //     file_siluette << k << "," << siluette_score << "\n";
+  //     file_siluette.close();
+  //   } else {
+  //     std::cerr << "Unable to open file " << out_siluette_file << std::endl;
+  //     return 1;
+  //   }
+  // }
 
   file_log.close();
 

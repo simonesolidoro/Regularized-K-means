@@ -2,9 +2,9 @@
 # Makefile — one executable per .cpp in src/
 # ------------------------------------------------------------
 
-CXX       := g++
+CXX       := g++-14
 CXXFLAGS  := -O2 -g -std=c++20 -march=native
-INCLUDES  := -I/home/matteo/Desktop/eigen \
+INCLUDES  := -I/home/simo/eigen-3.4.0 \
              -I../fdaPDE-cpp \
              -I../fdaPDE-cpp/fdaPDE/core
 
