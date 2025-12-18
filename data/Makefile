@@ -1,9 +1,9 @@
 # Makefile
 
 # Configuration
-CXX = g++
+CXX = g++-14
 CXXFLAGS = -O2 -g -std=c++20 -march=native
-INCLUDES = -I/home/matteo/Desktop/eigen -I../fdaPDE-cpp -I../fdaPDE-cpp/fdaPDE/core
+INCLUDES = -I/home/simo/eigen-3.4.0 -I../fdaPDE-cpp -I../fdaPDE-cpp/fdaPDE/core
 SRC = ./src/gen_data.cpp #################################################################
 BUILD_DIR = build
 TARGET = $(BUILD_DIR)/main
