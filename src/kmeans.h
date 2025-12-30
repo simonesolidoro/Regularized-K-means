@@ -480,7 +480,8 @@ public:
 };
 
 
-// RKMeans class for regularized KMeans
+// RKMeans class for regularized KMeans parallel
+// TODO: parallelizzare ache calcolo distanze 
 template <typename DistancePolicy, typename InitPolicy, typename Triangulation,
           typename Penalty>
 class RKMeans_parallel_gcv {
