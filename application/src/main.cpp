@@ -60,9 +60,9 @@ int main() {
   seed = 42; // params.seed; // 42; // seed for random number generator
 
   std::vector<double> lambda_grid;
-  lambda_grid.resize(9);
+  lambda_grid.resize(16);
   for (int i = 0; i < lambda_grid.size(); ++i) {
-    lambda_grid[i] = std::pow(10, -8.0 + 0.25 * i);
+    lambda_grid[i] = std::pow(10, -8.0 + 0.10 * i);
   }
 
   std::optional<double> lambda = std::nullopt;
@@ -182,7 +182,7 @@ int main() {
       Eigen::MatrixXd temp_centroids;
       t1 = high_resolution_clock::now();
 
-      RKMeans rkmeans(dist, init, D, fe_ls_elliptic(a, F), responses, k,
+      RKMeans_parallel rkmeans(dist, init, D, fe_ls_elliptic(a, F), responses, k,
                       max_iter, seed); //
       rkmeans.set_gcv_grid(lambda_grid);
       rkmeans.run(lambda);
