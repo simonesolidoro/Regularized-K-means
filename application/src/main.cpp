@@ -62,7 +62,7 @@ int main() {
   std::vector<double> lambda_grid;
   lambda_grid.resize(16);
   for (int i = 0; i < lambda_grid.size(); ++i) {
-    lambda_grid[i] = std::pow(10, -8.0 + 0.10 * i);
+    lambda_grid[i] = std::pow(10, -7.0 + 0.05 * i);
   }
 
   std::optional<double> lambda = std::nullopt;
@@ -182,7 +182,7 @@ int main() {
       Eigen::MatrixXd temp_centroids;
       t1 = high_resolution_clock::now();
 
-      RKMeans_parallel rkmeans(dist, init, D, fe_ls_elliptic(a, F), responses, k,
+      RKMeans_parallel_gcv rkmeans(dist, init, D, fe_ls_elliptic(a, F), responses, k,
                       max_iter, seed); //
       rkmeans.set_gcv_grid(lambda_grid);
       rkmeans.run(lambda);
