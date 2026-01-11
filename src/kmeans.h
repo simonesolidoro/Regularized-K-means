@@ -737,12 +737,12 @@ public:
       f_changed = false;
 
       // Assignment step parallel
-      int start = 0;
-      int stop = n_obs_;
-      //INSTABILE errore in cluster :
-//       main: /home/u10656115/.spack/environments/fdapde_devel/.spack-env/view/include/eigen3/Eigen/src/Core/Block.h:120: Eigen::Block<XprType, BlockRows, BlockCols, InnerPanel>::Block(XprType&, Eigen::Index) [with XprType = Eigen::Matrix<double, -1, -1>; int BlockRows = 1; int BlockCols = -1; bool InnerPanel = false; Eigen::Index = long int]: Assertion `(i>=0) && ( ((BlockRows==1) && (BlockCols==XprType::ColsAtCompileTime) && i<xpr.rows()) ||((BlockRows==XprType::RowsAtCompileTime) && (BlockCols==1) && i<xpr.cols()))' failed.
-//       Aborted (core dumped)
-      singleton_threadpool::instance().parallel_for(start,stop,[&f_changed,this](int i, int index_worker){
+      size_t start = 0;
+      size_t stop = n_obs_;
+
+      
+      singleton_threadpool::instance().parallel_for(start,stop,[&f_changed,this](size_t i, int index_worker){
+
           double best_dist = std::numeric_limits<double>::max();
           int best_c = memberships_[i]; //OSS: non serve rendere thread-safe membrership perche lo è già: ogni iterazione i legge e/o modifica solo suo elemento i-esimo di vettore membreship gia allocato
           auto f_i = Y_.row(i);
